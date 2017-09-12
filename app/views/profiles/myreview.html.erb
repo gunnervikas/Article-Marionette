@@ -1,0 +1,19 @@
+<h1><u>My Reviews</u></h1>
+<hr>
+
+<div id="my-review"></div>
+
+
+<% @myreviews.each do |review| %>
+
+ 	<h3><%= review.reviewer %></h3>
+	<%= review.body %><br>
+  	<% if review.user == current_user %>
+  	<%= link_to 'Delete', [review.article, review],
+               method: :delete, class: "btn-xs btn-primary",
+               data: { confirm: 'Are you sure?' } %>
+
+  	<%end%>
+ 	<hr>
+
+<% end %>

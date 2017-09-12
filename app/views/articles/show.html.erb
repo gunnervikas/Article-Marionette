@@ -1,0 +1,48 @@
+<%#= link_to 'Back', articles_path, class: "btn-sm btn-success" %>
+
+
+
+
+
+<p>
+  <strong><h2><div id="a-title"></div><%#= @article.title %></h2></strong>
+</p>
+
+<p><i>
+  <!-- <strong>Author:</strong> -->
+  
+  <%#= @article.user.email %>
+   <div id="a-created_at"><strong>Published Date:</strong></div>
+  <%#= @article.created_at %>
+  <div id="a-updated_at"></div>
+  <%#= @article.updated_at %>
+</i></p>
+<hr>
+<p>
+
+
+<p>
+  <strong><h3></h3></strong>
+  <div id="a-text"></div>
+
+  <%#= @article.text %>
+</p>
+
+<hr>
+
+<h3>Reviews</h3>
+
+<% @vis = @article.reviews %>
+
+	<% @vis.each do |u| %>
+		<% if u.visibility == true %>
+			<%= render u %>
+		<% end %>
+	<% end %>
+
+ </p>
+<hr>
+
+<h4>Send a review request</h4>
+
+<%= render 'reviews/form' %>

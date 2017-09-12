@@ -1,0 +1,1251 @@
+
+var router;
+var modelarticleid;
+
+function reviewrequestbtn(){
+
+
+
+
+
+
+}
+
+$( document ).ready(function() {
+
+
+
+function reviewrequestbtn(ele){
+
+    console.log("clicked form review request");
+
+}
+
+var AppRouter = Backbone.Router.extend({
+
+  routes:{
+
+  "articles": "viewArticles",
+  "articles/:articleid": "viewArticleByID",
+  "newarticle": "newArticle",
+  "editarticle": "editArticle",
+  "publishedarticles": "publishedArticles",
+  "privatearticles": "privateArticles",
+  "reviews": "Reviews",
+  "publicreviewrequest": "publicReviewRequest",
+  "privatereviewrequest": "privateReviewRequest",
+  "accountinfo": "AccountInfo",
+  "*others": "defaultRoute"
+
+  },
+
+  defaultRoute: function(){
+     // console.log("hello from default router");
+  },
+
+  viewArticles: function(){
+
+    $('.viewheader').empty();
+    $('#container').empty();
+    
+  new ArticleListView();
+    
+  },
+
+  viewArticleByID: function(articleid){
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+
+    var data;
+
+    $.ajax({
+      url: '/articles/' + articleid,
+      dataType: 'json',
+      async: true,
+      success: function (data) {
+        // console.log("Data fetched sucessfully");
+        // console.log(data);
+
+
+
+        $('.viewheader').html("<h2><b>" + data.title + "<b></h2>");
+        $("#container").append("<h5><i>Published at: " + data.created_at + "</i></h5>");
+        $("#container").append("<h5><i>Updated at: " + data.updated_at + "</i></h5>");
+        $("#container").append("<h4>" + data.text + "</h5><br><br>");
+        // $("#container").append("<input type='textarea' placeholder='Enter Reviewer Email' >" + " " + "<button class='edit-request btn-xs btn-primary'>Send</button>" + "<hr>");
+        $('#container').append("<label>Send Review Request</label>");
+        $('#container').append("<textarea class='form-control' id='' placeholder='Minimum 10 Characters'></textarea><br> <button class='CreateSubmit btn btn-success' id='sendreviewrequest' onClick='reviewrequestbtn(" + data.id + ");'>Send Review</button>");
+
+
+
+
+      },
+
+      error: function(){
+        // console.log(" Get article by ID error");
+      }
+
+    });
+
+    // var showarticlemodel = new ShowArticleModel();
+    // showarticlemodel.render();
+
+  },
+
+  newArticle: function(){
+
+    $('.viewheader').empty();
+    $('#container').empty();
+    $("#container").html(newarticleview.render().el);
+
+  },
+
+  editArticle: function(){
+
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+    editarticleview = new editArticleView();
+
+
+
+    editarticleview.render();
+
+  },
+
+  publishedArticles: function(){
+
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+    new MyArticleListView();
+
+  },
+
+  privateArticles: function(){
+
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+      new PrivateArticleListView();
+
+  },
+
+  Reviews: function(){
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+    new MyReviewListView();
+
+  },
+
+  publicReviewRequest: function(){
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+    new ReviewRequestListView();
+
+  },
+
+  privateReviewRequest: function(){
+
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+    new PrivateRequestListView();
+
+  },
+
+  AccountInfo: function(){
+
+
+    $('.viewheader').empty();
+    $('#container').empty();
+
+    var profile = new Profile();
+
+    var p = profile.fetch({
+
+      success: function (model1) {
+
+        profileView = new ProfileView({model: model1});
+
+        profileView.render();
+                 
+        }
+
+    });
+
+  },
+
+});
+
+
+
+
+
+router = new AppRouter();
+
+Backbone.history.start();
+
+var NavView = Backbone.View.extend({
+  events: {
+    "click": "onClick"
+  },
+
+  onClick: function(e){
+    
+    var $ul = $(e.target);
+
+    router.navigate($ul.attr('data-url'), { trigger: true });
+    
+  }
+
+});
+
+var navView = new NavView ({ el: "#nav" });
+
+
+
+});
+
+
+
+
+//---------------(START)INDEX-PAGE-------------------------------
+
+
+// $(function() {
+var Article = Backbone.Model.extend({
+
+  defaults: {
+    title: 'abc',
+    created_at: 'Time',
+    email: 'Email',  
+    text: 'Text of the article'
+  }
+  
+});
+
+
+// Create a collection of Articles
+var ArticleList = Backbone.Collection.extend({
+    // url: "/api/album/1",
+    url: '/articles',
+    model: Article
+
+});
+
+//Article Model View
+var ArticleView = Marionette.CollectionView.extend({
+
+    events: {
+      "click .delete": "onDelete",
+      "click .view" : "onView"
+    },
+
+    onView: function(){
+      router.navigate("/articles/" + this.model.get("id"), true);
+      //Backbone.history.navigate("/articles/" + this.model.get("id"), true);
+      // console.log("hi");
+    },
+
+    onDelete: function() {
+
+
+      this.remove();
+
+      this.model.destroy({
+        success: function(){
+         // console.log("success");
+        },
+        error: function(){
+          //console.log("error");
+        }
+
+      });
+      
+    },
+      
+   	
+    render: function(model) {
+
+      this.$el.append("<h3>" + this.model.get('title') + "</h3>");
+      this.$el.append("<b><i>"+ this.model.get('created_at') + this.model.get('email') + "</></i>" );
+      this.$el.append("<br>" + this.model.get('text') + "<br>" + "<br>" );
+      this.$el.append("<button class='view btn-xs btn-primary' id=" + this.model.get("id") + ">View</button>" + "&nbsp;");
+      this.$el.append("<button class='delete btn-xs btn-primary' id=" + this.model.get("id") + ">Delete</button>"+ "<hr>");
+
+      return this;
+
+    }
+});
+
+//Article model collection View
+var ArticleListView = Backbone.View.extend({
+
+      
+    initialize: function() {
+      var articleList = new ArticleList();
+          // articles    = $(this.el).find('#articles')
+          // articleView;
+
+      articleList.fetch({
+        success: function (collection) {
+          collection.each(function (model) {
+
+            articleView = new ArticleView({
+              model: model
+            });
+
+            $(".viewheader").html("Articles");
+            $('#container').append(articleView.render().el);
+          });
+
+        }
+      });
+    },
+ 
+    // render: function() {
+    //   return this;
+    // }
+});
+
+new ArticleListView();
+
+//---------------(END)INDEX-PAGE-------------------------------
+
+
+
+//-------------(START)PROFILE----------------------------
+//Account Info
+
+
+// $ (function (){
+
+//Profile Model  
+var Profile = Backbone.Model.extend({
+
+  urlRoot: '/profiles/accountinfo'
+
+});
+
+//Profile View 
+var ProfileView = Backbone.View.extend({
+
+	render: function() {
+
+    $(".viewheader").html("Account Information<br><br>");
+    $('#container').html(this.model.get('email'));
+
+    return this;
+
+  }
+
+});
+
+
+//--------------------------------------------------------------------
+
+//MyReview
+
+var MyReview = Backbone.Model.extend({
+
+  defaults: {
+    reviewer: "default email id",
+    body: "Default body"
+  }
+  
+});
+
+// 
+var MyReviewList = Backbone.Collection.extend({
+
+    url: '/profiles/myreview',
+    model: MyReview
+
+});
+
+
+var MyReviewView = Backbone.View.extend({
+
+    el: '#container',
+
+    events: {
+      "click .delete": "onDelete",
+    },
+
+    onDelete: function() {
+
+    	this.remove();
+
+      $.ajax({
+        url: '/articles/' + this.model.get('article_id') + "/reviews/" + this.model.get('id'),
+        method: 'DELETE',
+        dataType: 'json',
+        async: true,
+
+        success: function (data) {
+
+          console.log('data');
+        
+        },
+
+        error: function(e){
+
+          console.log(e);
+
+        } 
+
+        });
+      
+      },
+      
+    
+    
+    render: function(model) {
+
+
+        //console.log(this.model.get('article_id'));
+
+        $(".viewheader").html("Reviews");
+        this.$el.append(this.model.get('reviewer') + "<br>" +
+        this.model.get('body') + "<br>" + "<button class='delete btn-xs btn-primary' id=" + this.model.get("id") + ">Delete</button>"+ "<hr>");
+
+
+        return this;
+
+    }
+
+});
+
+var MyReviewListView = Backbone.View.extend({
+
+      
+    initialize: function() {
+      var myreviewlist = new MyReviewList();
+          // articles    = $(this.el).find('#articles')
+          // articleView;
+
+    myreviewlist.fetch({
+        success: function (collection) {
+          collection.each(function (model) {
+
+            myreviewview = new MyReviewView({
+              model: model
+            });
+            
+            $('#my-review').append(myreviewview.render().el);
+          });
+        }
+      });
+    },
+ 
+    render: function() {
+      return this;
+    }
+
+});
+
+
+
+//------------------------------------------------------------------------------
+
+//Review Request
+
+var ReviewRequest = Backbone.Model.extend({
+
+  defaults: {
+
+   reviewer: "default reviewer",
+   body: "default body",
+   visibility: "default visibility",
+   created_at: "default created_at"
+
+  }
+  
+});
+
+
+var ReviewRequestList = Backbone.Collection.extend({
+
+    url: '/profiles/reviewrequest',
+
+    model: ReviewRequest
+
+});
+
+
+
+var ReviewRequestView = Backbone.View.extend({
+
+  el: "#container",
+
+  events: {
+    "click .publish": "onPubish",
+  },
+
+  onPublish: function() {
+
+    this.remove();
+
+    this.model.destroy({
+
+      success: function(){
+       console.log("success");
+      },
+      error: function(){
+        console.log("error");
+      }
+
+    });
+    
+  },
+  
+
+  render: function(model){
+    $(".viewheader").html("Public Review Request<br><br>");
+    this.$el.append(this.model.get('reviewer') + "<br>" + this.model.get('body') +
+       "<br>" + this.model.get('visibility') + "<br>" + this.model.get('created_at') + "<br>" + "<button class='publish btn-xs btn-primary' id=" + this.model.get("id") + ">Publish</button>"+ "<hr>" );
+    return this;
+  } 
+
+});
+
+
+var ReviewRequestListView = Backbone.View.extend({
+
+      
+    initialize: function() {
+      var reviewrequestlist = new ReviewRequestList();
+      reviewrequestlist.fetch({
+        success: function (collection) {
+          collection.each(function (model) {
+
+            reviewrequestview = new ReviewRequestView({
+              model: model
+            });
+            
+            $('#review-request').append(reviewrequestview.render().el);
+          });
+        }
+      });
+    },
+ 
+    render: function() {
+      return this;
+    }
+});
+
+
+//Private Review Review Request -----------------------------------------------------
+   
+var PrivateRequest = Backbone.Model.extend({
+
+  defaults: {
+   
+  }
+  
+});
+
+
+var PrivateRequestList = Backbone.Collection.extend({
+   
+    url: '/profiles/privaterequest',
+    model: PrivateRequest
+});
+
+
+var PrivateRequestView = Backbone.View.extend({
+      
+
+    events: {
+    	"click .view" : "onView"
+    },
+    
+    render: function(model) {
+        $(".viewheader").html("Private Review Request<br>");             
+        $('#container').html(this.model.get('title') + "<br>" + this.model.get('created_at') + 
+          this.model.get('email') + "<br>" + this.model.get('text') +"<hr>" );
+        return this;
+    },
+
+    //+ "<button class='view btn-xs btn-primary' id=" + this.model.get("id") + ">View</button>"+ 
+
+    onView: function(){
+
+
+    console.log("from obn view");
+
+      var data;
+
+      $.ajax({
+        url: '/articles/' +  this.model.get('id'),
+        dataType: 'json',
+        async: true,
+        success: function (data) {
+          // console.log("Data fetched sucessfully");
+          // console.log(data);
+
+          $('.viewheader').empty();
+          $('#container').empty();
+
+          $('.viewheader').html("<h2><b>" + data.title + "<b></h2>");
+          $("#container").append("<h5><i>Published at: " + data.created_at + "</i></h5>");
+          $("#container").append("<h5><i>Updated at: " + data.updated_at + "</i></h5>");
+          $("#container").append("<h4>" + data.text + "</h5>");
+
+        },
+
+        error: function(){
+          // console.log(" Get article by ID error");
+        }
+
+      });
+
+    },
+
+
+});
+
+
+var PrivateRequestListView = Backbone.View.extend({
+
+      
+    initialize: function() {
+      var privaterequestlist = new PrivateRequestList();
+
+      privaterequestlist.fetch({
+        success: function (collection) {
+          collection.each(function (model) {
+
+            privaterequestview = new PrivateRequestView({
+              model: model
+            });
+            
+            $('#private-request').append(privaterequestview.render().el);
+          });
+        }
+      });
+    },
+ 
+    render: function() {
+      return this;
+    }
+
+});
+
+
+
+
+
+//My Articles-----------------------------------------------------
+            
+var MyArticle = Backbone.Model.extend({
+
+  defaults: {
+   
+  }
+  
+});
+
+
+var MyArticleList = Backbone.Collection.extend({
+   
+    url: '/profiles/myarticle',
+    model: MyArticle
+
+});
+
+
+var MyArticleView = Backbone.View.extend({
+
+  el: '#container',
+
+  events: {
+    //"click .delete": "onDelete",
+    "click .view" : "onView",
+    "click .edit": "onEdit"
+  }, 
+    
+  render: function(model) {
+        $(".viewheader").html("My Articles<br>");
+        $("#container").append("<div id='article_" + this.model.get('id') +"'></div>");        
+        $('#article_' + this.model.get('id')).append("<h3>" + this.model.get('title') + "</h3>" + "<br>" + this.model.get('created_at') + 
+        this.model.get('updated_at') + "<br>" + this.model.get('text') + "<br>");
+        $('#article_' + this.model.get('id')).append("<button class='view btn-xs btn-primary' id=" + this.model.get("id") + ">View</button>"+" "+"<button class='edit btn-xs btn-primary'  id = 'editbtn' aid=" + this.model.get("id") + ">Edit</button>"+" "+"<button class='delete btn-xs btn-primary' onclick='art_article_delete(" + this.model.get('id') + ");' id=" + this.model.get("id") + ">Delete</button>"+"<hr>");
+        return this;
+  },
+
+  //onDelete: function(){
+
+
+    // this.remove();
+
+    // $.ajax({
+
+    //   url: '/articles/' + this.model.get('id'),
+    //   method: 'DELETE',
+    //   dataType: 'json',
+    //   async: true,
+
+    //   success: function (data) {
+
+    //     console.log('deleted sucessfully');
+      
+    //   },
+
+    //   error: function(){
+
+    //   //Backbone.history.navigate("articles", {trigger: true});
+
+    //     console.log("ERROR");
+    //    // console.log(e);
+
+    //     } 
+
+    //   });
+
+
+  //},
+
+  onView: function(){
+
+    var data;
+
+    $.ajax({
+      url: '/articles/' +  this.model.get('id'),
+      dataType: 'json',
+      async: true,
+      success: function (data) {
+        // console.log("Data fetched sucessfully");
+        // console.log(data);
+
+        $('.viewheader').empty();
+        $('#container').empty();
+
+        $('.viewheader').html("<h2><b>" + data.title + "<b></h2>");
+        $("#container").append("<h5><i>Published at: " + data.created_at + "</i></h5>");
+        $("#container").append("<h5><i>Updated at: " + data.updated_at + "</i></h5>");
+        $("#container").append("<h4>" + data.text + "</h5>");
+
+      },
+
+      error: function(){
+        // console.log(" Get article by ID error");
+      }
+
+    });
+
+  },
+
+  onEdit: function(ele){
+
+  	console.log($(ele.currentTarget).attr('aid'));
+
+  	var t = new editArticleView();
+
+  	t.render($(ele.target).attr('aid'));
+
+  	// var data;
+
+  	// $.ajax({
+  	//   url: '/articles/' +  this.model.get('id'),
+  	//   dataType: 'json',
+  	//   async: true,
+  	//   success: function (data) {
+  	//     // console.log("Data fetched sucessfully");
+  	//     // console.log(data);
+
+  	//     $('.viewheader').empty();
+  	//     $('#container').empty();
+
+  	//     $('.viewheader').html("<h2><b>" + data.title + "<b></h2>");
+  	//     $("#container").append("<h5><i>Published at: " + data.created_at + "</i></h5>");
+  	//     $("#container").append("<h5><i>Updated at: " + data.updated_at + "</i></h5>");
+  	//     $("#container").append("<h4>" + data.text + "</h5>");
+
+  	//   },
+
+  	//   error: function(){
+  	//     // console.log(" Get article by ID error");
+  	//   }
+
+  	// });
+
+
+
+
+
+  }
+
+});
+
+//to delete my article
+function art_article_delete(ele){
+	$('#article_' + ele).remove();
+	console.log("from article delete function");
+
+	$.ajax({
+
+	  url: '/articles/' + ele,
+	  method: 'DELETE',
+	  dataType: 'json',
+	  async: true,
+
+	  success: function (data) {
+
+	    console.log('data');
+	  
+	  },
+
+	  error: function(e){
+
+	    console.log(e);
+
+	  } 
+
+	  });
+
+}
+
+
+
+
+
+
+var MyArticleListView = Backbone.View.extend({
+
+      
+    initialize: function() {
+      var myarticlelist = new MyArticleList();
+
+      myarticlelist.fetch({
+        success: function (collection) {
+          collection.each(function (model) {
+
+            myarticleview = new MyArticleView({
+              model: model
+            });
+            
+            $('#my-articles').append(myarticleview.render().el);
+          });
+        }
+      });
+    },
+ 
+    render: function() {
+      return this;
+    }
+});
+
+
+
+
+//Private-articles-----------------------------------------------------
+
+var PrivateArticle = Backbone.Model.extend({
+
+  defaults: {
+
+  }
+
+});
+
+
+var PrivateArticleList = Backbone.Collection.extend({
+
+  url: '/profiles/privatearticle',
+  model: PrivateArticle
+
+});
+
+
+var newReviewRequestModel = Backbone.Model.extend({
+
+  url: '/reviewrequests'
+
+});
+
+var PrivateArticleView = Backbone.View.extend({
+
+  el: "#container",
+
+
+
+  events: {
+   
+    //"click .edit-request" : "onEditRequest"
+  },
+
+
+
+  render: function(model) {
+    $(".viewheader").html("Private Article<br>"); 
+    $('#container').append(this.model.get('title') + "<br>" + this.model.get('created_at') + 
+      this.model.get('updated_at') + "<br>" + this.model.get('text') + "<br><br>" + "<label>Invite To Edit: </label>" + " ");
+    this.$el.append("<input type='text' id='r_" + this.model.get('id') + "' placeholder='Enter Reviewer Email' >" + " " + "<button class='edit-request btn-xs btn-primary' onclick='sub(" + this.model.get('id') + ");'  id=" + this.model.get('id') + ">Send</button>" + "<hr>");
+    return this;
+  },
+
+  onEditRequest: function(ele) {
+      
+      console.log(this.value);
+      newreviewrequest = new newReviewRequestModel();
+      console.log($('#r_' + this.model.get('id')).val());
+
+      // $.ajax({
+      // url: '/reviewrequests?reviewer_id=' + $('#r_' + this.model.get('id')).val() + "&article_id=" + ,
+      // dataType: 'json',
+      // method: 'POST',
+      // async: true,
+      // success: function (data) {
+        
+      // },
+      // error: function(e){
+      //   console.log(e);
+      // } });
+
+
+      // newreviewrequest.set({reviewer_id: $('#r_' + this.model.get('id')).val(), article_id: this.model.get('id')});
+      // newreviewrequest.save({},{
+      //   success: function(model, response, options)
+      //   {
+
+      //     console.log("Article Saved.");
+          
+      //     //router.navigate("#articles");
+      //     //window.location.reload();
+      //     //Backbone.history.navigate("articles", {trigger: true});
+          
+      //   },
+      //   error: function(model,xhr,options)
+      //   {
+      //     console.log("Could not be saved.");
+      //     //Backbone.history.navigate("articles", {trigger: true});
+      //   }
+      // });
+
+      //console.log($("#title").val());
+
+
+    // $.ajax({
+    //   url: '/reviewrequests/',
+    //   dataType: 'json',
+    //   method: 'POST',
+    //   async: true,
+    //   success: function (data) {
+        
+    //   },
+    //   error: function(e){
+    //     console.log(e);
+    //   } });
+
+  
+  }
+
+});
+
+function sub(ele)
+{
+	// var ul = $(ele.target);
+	//console.log($('#r_' + ele).val());
+	$.ajax({
+      url: '/reviewrequests',
+      contentType: 'application/json',
+      data: JSON.stringify({reviewer_id: $('#r_' + ele).val(), article_id: ele}),
+      type: 'POST',
+      async: true,
+      success: function (data) {
+        console.log("success");
+      },
+      error: function(e){
+        console.log(e);
+      } });
+}
+
+  var PrivateArticleListView = Backbone.View.extend({
+
+
+  initialize: function() {
+    var privatearticlelist = new PrivateArticleList();
+
+    privatearticlelist.fetch({
+      success: function (collection) {
+        collection.each(function (model) {
+
+          privatearticleview = new PrivateArticleView({
+            model: model
+          });
+
+          $('#private-article').append(privatearticleview.render().el);
+        });
+      }
+    });
+  },
+
+  render: function() {
+      return this;
+    }
+  });
+
+
+//-------------------END(PROFILE)----------------------------
+
+//Create New Article
+
+
+var newArticleModel = Backbone.Model.extend({
+
+
+  urlRoot: '/articles/',
+  
+  defaults: {
+
+  }
+
+});
+
+var newArticleView = Backbone.View.extend({
+
+  model: newArticleModel,
+  // el: '#container',
+
+  events: {
+  	"click .CreateSubmit": "onSubmit",
+  },
+
+  render: function(){
+  	$(".viewheader").html("<h3><b>New Article</b></h3><br>");
+  	this.$el.append(
+  		"<label>Public:</label>&nbsp" + "<input type='radio' id='visibility-true' name='visibility' value='true' class='form-group' class='control-label'" +
+      "<br><label>Private:</label>&nbsp" + "<input type='radio' id='visibility-false' value='false' name='visibility'  class='form-group class='control-label'<br>" +
+      "<br><br><label>Title</label><br>" + 
+      "<input type='text' id='art-title' placeholder='Minimum 5 Characters' class='form-control'><br>" +
+      "<label>Description</label>" + 
+      "<textarea class='form-control' id='art-text' placeholder='Minimum 20 Characters'></textarea><br> <button class='CreateSubmit btn btn-success' id='sub'>Submit Article</button>");
+    return this;
+  },
+
+
+  onSubmit: function()
+  {
+    console.log("on render function");
+    newarticlemodel = new newArticleModel();
+    var rvalue = $("input[name='visibility']:checked").val();
+    console.log(rvalue);
+    newarticlemodel.set({visibility: rvalue, title: $('#art-title').val(), text: $("#art-text").val()});
+    //console.log(newarticlemodel); 
+    //console.log("Attempting to save");
+    newarticlemodel.save({},{
+      success: function(model, response, options)
+      {
+
+        //console.log("Article Saved.");
+        
+        //router.navigate("#articles");
+        //window.location.reload();
+        Backbone.history.navigate("articles", {trigger: true});
+        
+      },
+      error: function(model,xhr,options)
+      {
+      	//router.navigate("#articles");
+        //console.log("Could not be saved.");
+        Backbone.history.navigate("articles", {trigger: true});
+      }
+    });
+
+    //console.log($("#title").val());
+  },
+
+
+});
+
+newarticleview = new newArticleView();
+
+// newarticleview.render();
+
+
+
+
+
+//------------------------------------------------------------------------------------
+
+//Edit Article
+
+
+
+
+var ArticleDescModel = Backbone.Model.extend({
+
+  idAttribute: "id",
+
+  urlRoot: '/articles'
+
+});
+
+
+var ArticleCollection = Backbone.Collection.extend({
+
+    id: '',
+    url: '/articles',
+    model: ArticleDescModel,  
+
+});
+
+
+var editArticleModel = Backbone.Model.extend({
+
+  urlRoot: '/articles',
+
+  defaults: {
+
+  },
+
+  idAttribute: "id"
+
+});
+
+
+var Adata;
+var articleid;
+var str;
+var textdata;
+var editArticleView = Backbone.View.extend({
+
+  // el: '.edit-article',
+
+  model: editArticleModel,
+
+  events: {
+   
+    "click .CreateSubmit" : "onSubmit"
+  },
+
+
+  initialize: function (options) {
+
+        this.art = new ArticleCollection();
+        this.art.id = 36;
+        this.art.fetch();
+        articleid = this.art.id;
+        //this.render(this.art.id);
+  },
+
+  render: function(artid){
+
+    //this.$el.empty();
+    //console.log(this.$el);
+
+    $.ajax({
+      url: '/articles/'+ artid +'/edit/',
+      dataType: 'json',
+      async: false,
+      success: function (data) {
+        str = data.title
+        textdata = data.text        
+      },
+      error: function(e){
+        console.log("Ajax Error");
+      } });
+
+
+    $(".viewheader").html("<h3><b>Edit Article</b></h3>");
+    // $("#new-article").append(
+    $("#container").html(
+
+        //"<label>Public:</label>&nbsp" + "<input type='radio' id='visibility-true' name='visibility' value='false' class='form-group' class='control-label'" +
+        //"<br><label>Private:</label>&nbsp" + "<input type='radio' id='visibility-false' name='visibility'  class='form-group class='control-label'<br>" +
+        "<br><h4><label>Title</label></h4>" + 
+        "<input type='text' id='art-title' value='" + str + "' placeholder='Minimum 5 Characters' class='form-control'><br>" +
+        "<label><b><h4>Description</h4></b></label>" + 
+        "<textarea class='form-control' id='art-text' placeholder='Minimum 20 Characters'>"+ textdata +"</textarea><br>"+"<button class='CreateSubmit onclick='art_update(" + this.model.get('id') + ");' btn btn-success'>Submit Article</button><hr>");
+      
+
+
+    return this;
+  },
+
+  onSubmit: function(){
+
+  console.log("on render function");
+  editarticlemodel = new editArticleModel();
+  editarticlemodel.set({ id: articleid, visibility: 'true', title: $('#art-title').val(), text: $("#art-text").val()});
+  console.log(editarticlemodel); 
+  console.log("Attempting to save");
+  editarticlemodel.save({},{
+    success: function(model, response, options)
+    {
+
+      console.log("Article Saved.");
+      
+      // router.navigate("#qfeed");
+      // window.location.reload();
+      // Backbone.history.loadUrl();
+      
+    },
+    error: function(model,xhr,options)
+    {
+      console.log("Could not be saved.");
+    }
+  });
+
+}
+
+});
+
+
+
+
+
+
+
+
+//----------------------------------------------------------------------------------
+
+//Article Show
+
+var ShowArticleModel = Backbone.Model.extend({
+
+  url: '/articles/' + 36,
+
+  idAttribute: 'id',
+
+  defaults: {
+   
+  }
+  
+});
+
+
+var ShowArticleView = Backbone.View.extend({
+
+  render: function() {
+
+
+  }
+
+});
+
+
+// var a = showarticlemodel.fetch({
+
+//    success: function (model1) {
+//     // console.log(model1);
+//      showarticleview = new ShowArticleView({model: model1});
+
+//      showarticleview.render();
+              
+//      }
+
+//  });
+

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Qwerty</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+  <style>
+
+    .navbar-custom {
+        font-weight: bold;
+        color: white;
+        background-color: #00264c;
+        font-size: 1em;
+
+      }
+
+      .alert-bg {
+        background-color: #e4685d;
+  }
+
+  </style>
+
+
+
+  </head>
+
+  <body>
+
+
+
+
+  <body style="background-color:powderblue;">
+
+  <nav class="navbar navbar-inverse navbar-custom">
+
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+    </div>
+
+    <style type="text/css">
+      #nav ul li { cursor: pointer; color: white;  }
+    </style>
+
+  <div class="collapse navbar-collapse" id="nav">
+ 
+   <nav id="nav" class="collapse navbar-collapse nav navbar-nav">
+       <ul class="nav navbar-nav">
+        
+        <li><a data-url='articles' class="nav-item navbar-nav">Home</a></li>
+
+        <% if user_signed_in? %>
+
+        <li><a data-url='newarticle' class="nav-item navbar-nav">New Article</a></li>
+
+       
+
+        <li class="dropdown">
+
+          <a class="dropdown-toggle" data-toggle="dropdown" data-url="art">Article <span class="caret"></span></a>
+
+          <ul class="dropdown-menu">
+
+           <li><a data-url='publishedarticles' class="nav-item navbar-nav">Published Article</a></li>
+
+           <li><a data-url='privatearticles' class="nav-item navbar-nav">Private Article</a></li>
+
+          </ul>
+
+        </li>
+
+        <li class="dropdown">
+
+          <a class="dropdown-toggle" data-toggle="dropdown" data-url="review">Reviews<span class="caret"></span></a>
+
+          <ul class="dropdown-menu">
+
+            <li><a data-url='reviews' class="nav-item navbar-nav">Reviews</a></li>
+
+            <li><a data-url='publicreviewrequest' class="nav-item navbar-nav">Public Review Request</a></li>
+
+            <li><a data-url="privatereviewrequest" class="nav-item navbar-nav">Private Review Request</a></li>
+
+          </ul>
+          
+        </li> 
+        
+        <li><a data-url='accountinfo' class="nav-item navbar-nav">Account</a></li>
+
+        <% end %>
+
+      </ul>
+    </nav> 
+
+
+      
+        
+
+        <!-- <li data-url='articles'>HOME<%#=  link_to"Home", articles_path %></li> -->
+
+        <!-- <li data-url='articles'>NEW ARTICLE<%#= link_to 'New Article', new_article_path %></li> -->
+
+      
+
+       <!--  <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Article <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><%#= link_to("Published Articles", myarticle_profiles_path, :class => 'action myarticles') %></li>
+            <li><%#= link_to("Private Articles", privatearticle_profiles_path, :class => 'action mydraft') %></li>
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">Review <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><%#= link_to("Reviews", myreview_profiles_path, :class => 'action myreviews')%></li>
+            <li><%#= link_to("Public Review Request", reviewrequest_profiles_path, :class => 'action editrequests') %></li>
+            <li><%#= link_to("Private Review Request", privaterequest_profiles_path, :class => 'action privaterequest')%></li>
+          </ul>
+        </li> -->
+
+        <!-- <li><%#= link_to("Account Info", accountinfo_profiles_path, :class => 'action accountinfo') %></li> -->
+
+        </ul>
+
+        
+
+          <ul class="nav navbar-nav navbar-right">
+
+          <% if user_signed_in? == false %>
+
+            <li><%= link_to "Sign In",  new_user_session_path %></li>
+            <li><%= link_to "Sign Up", new_user_registration_path  %></li>
+
+          <% else %>
+            <li><%= link_to current_user.email %></li>
+            <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete %></li>
+          <%end%>
+
+      </ul>
+
+
+
+    </div>
+  </div>
+</nav>
+
+
+
+<div class="alert alert-success">
+    <strong><p class="notice"><%= notice %></p></strong>
+</div>
+
+<h2><b><div class="viewheader"></div></b></h2>
+<div id="container"></div>
+
+
+<script type="text/template">
+  
+
+</script>
+
+
+<!--
+      <div class="alert alert-warning">
+          <strong><p class="alert"><%= alert %></p></strong>
+      </div> -->
+
+     <ul> 
+
+    <%= yield %>
+  </body>
+</html>

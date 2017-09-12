@@ -1,0 +1,21 @@
+<u><h1>Private Review Request</h1></u>
+<hr>
+
+<div id="private-review"></div>
+
+<% @article.each do |f| %>
+<%# @.each do |f| %>
+<b><%="Title:"%></b>
+<%= link_to f.title, f  %><br><br>
+<b><%="Body:"%></b>
+<%= f.text %><br><br>
+<b><%="Visiblity:"%></b>
+<%= f.visibility %><br><br>
+<b><%="created:"%></b>
+<% f.created_at %><br>
+
+<br>
+
+<hr>
+
+<%end%>

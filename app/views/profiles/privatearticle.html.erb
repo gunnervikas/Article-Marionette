@@ -1,0 +1,21 @@
+<h1><u>Private Article</u></h1>
+<hr>
+
+<div id="private-article"></div>
+
+
+<% @mydraft.each do |f| %>
+	<h3><%= f.title %></h3>
+	<%= f.text %><br><br>
+
+
+<%= link_to "Publish", update_visibility_of_article_true_article_path(f.id), method: :patch, class: "btn-xs btn-primary" %>&emsp;
+<%= link_to "Invite to Edit", new_reviewrequest_path(:article_id => f.id), class: "btn-xs btn-primary" %>&emsp;
+
+<%= link_to 'Destroy', article_path(f.id),
+              method: :delete, class: "btn-xs btn-primary",
+              data: { confirm: 'Are you sure?' } %>
+
+<hr>
+
+<% end %>

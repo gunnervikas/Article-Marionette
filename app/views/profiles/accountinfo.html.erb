@@ -1,0 +1,40 @@
+<h1><u>Account details</u></h1>
+<hr>
+
+<div id="email_id"></div>
+
+
+
+
+<% if user_signed_in? %>
+    <h2><div>Email ID: <%= current_user.email %></div></h2>
+<hr>
+
+<div class="container">
+
+  <div class="row">
+
+        <div class="notification-icon">
+              <span><b>Public Reviews for my articles:</b></span>
+              <span class="badge"><%= @abc.count  %></span><br><br>
+        </div>
+        
+        
+        <div class="notification-icon">
+            <span><b>Public Reviews I have given</b></span>
+            <span class="badge"><%= @current_user_reviews.count %></span>
+        </div>
+      	<br>
+        <div class="notification-icon">
+            <span><b>Private Reviews for my articles</b></span>
+            <span class="badge"><%= @art_id.count %></span>
+        </div>
+        <br>
+        <div class="notification-icon">
+            <span><b> Private Reviews I have given</b></span>
+            <span class="badge"><%= @cur_private_review.count  %></span>
+        </div>
+      
+	</div>
+
+<% end %>

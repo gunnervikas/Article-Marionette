@@ -1,0 +1,42 @@
+<u><h1>Send Review Request Personally</h1></u>
+
+<hr>
+
+
+
+  <% if @reviewrequest.errors.any? %>
+  <div id="error_explanation">
+      <h2>
+        <%= pluralize(@reviewrequest.errors.count, "error") %> prohibited
+        this reviewrequest from being saved:
+      </h2>
+      <ul>
+        <% @reviewrequest.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+
+
+<div class="row">
+	<div class="col-md-4">
+		<%= form_for(@reviewrequest, class: "form_horizontal") do |f| %>
+
+		<%= f.hidden_field :article_id, :value => @a.id %>
+
+	<div class="form-group">
+
+		<%= f.label "Email", class: "control-label" %>
+		<%= f.text_field :reviewer_id, class: "form-control" %>
+	</div>
+
+	
+		<%= f.submit "Send Request", class: "btn btn-primary" %>
+	
+
+	<% end %>
+	</div>
+</div>

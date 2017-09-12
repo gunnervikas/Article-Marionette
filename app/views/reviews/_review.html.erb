@@ -1,0 +1,17 @@
+
+<p>
+  <strong>Reviewer:</strong>
+  <%= review.reviewer %>
+</p>
+ 
+<p>
+  <strong>Review:</strong>
+  <%= review.body %>
+<p>
+  <% if review.user == current_user %>
+  <%= link_to 'Destroy Review', [review.article, review],
+               method: :delete,
+               data: { confirm: 'Are you sure?' } %>
+
+  <%end%>
+</p>

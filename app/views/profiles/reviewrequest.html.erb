@@ -1,0 +1,30 @@
+<h1><u>Review Request</u></h1>
+<hr>
+
+<div id="review-request" ></div>
+
+<% @reviewreq.each do |f| %>
+<%# @.each do |f| %>
+<b><%="Reviewer:"%></b>
+<%= f.reviewer %><br>
+<b><%="Body:"%></b>
+<%= f.body %><br>
+<b><%="Visiblity:"%></b>
+<%= f.visibility %><br>
+<b><%="created:"%></b>
+<% f.created_at %><br>
+
+<%= link_to "Approve", update_visibility_of_review_true_profile_path(f.id), class: "btn-xs btn-primary", method: :patch %><br>
+
+<hr>
+
+<%end%>
+
+<%#= @a %>
+
+<%#= @b %>
+
+<br>
+<%#= @c %>
+<br>
+<%#= @temp %>

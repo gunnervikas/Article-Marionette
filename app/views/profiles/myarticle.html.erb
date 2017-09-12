@@ -1,0 +1,19 @@
+<h1><u>My Articles</u></h1>
+<hr>
+
+<div id="my-articles"></div>
+
+<% @myarticles.each do |article| %>
+
+	<h3><%= link_to article.title, article %></h3>
+	<p><%= article.text %> </p>
+	<% if article.user == current_user %>
+      <%= link_to 'Show', article_path(article), class: "btn-xs btn-primary" %>
+      <%= link_to 'Edit', edit_article_path(article), class: "btn-xs btn-primary" %>
+      <%= link_to 'Destroy', article_path(article), class: "btn-xs btn-primary",
+              method: :delete,
+              data: { confirm: 'Are you sure?' } %>
+
+      <% end %>
+	 <hr>
+<% end %>
